@@ -1,3 +1,4 @@
+
 import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
 
@@ -13,17 +14,23 @@ function hadleFromSnackSubmit(e) {
   const form = e.target;
   const state = form.state.value;
   const delay = form.delay.value;
-  setTimeout(() => {
-    const promise = createNewPromise(state, delay);
-    promise
-      .then(value => displaySuccess(value))
-      .catch(err => displayError(err));
-  }, Number(delay));
+  const promise = createNewPromise(state, delay);
+  promise.then(value => displaySuccess(value)).catch(err => displayError(err));
   form.reset();
 }
 
 function createNewPromise(state, delay) {
-  return state === 'fulfilled' ? Promise.resolve(delay) : Promise.reject(delay);
+  const promise = new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (state === 'fulfilled') {
+        resolve(delay);
+      } else {
+        reject(delay);
+      }
+    }, delay);
+  });
+
+  return promise;
 }
 
 function displaySuccess(delay) {
